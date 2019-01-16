@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Tiraffe</title>
+    <link>https://tiraffe.github.io/</link>
+    <description>Recent content on Tiraffe</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-US</language>
+    <lastBuildDate>Mon, 26 Feb 2018 21:56:59 +0800</lastBuildDate>
+    
+	<atom:link href="https://tiraffe.github.io/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>MIT-6.824 Distributed Systems 总结</title>
+      <link>https://tiraffe.github.io/blog/mit-6.824-distributed-systems-%E6%80%BB%E7%BB%93/</link>
+      <pubDate>Mon, 26 Feb 2018 21:56:59 +0800</pubDate>
+      
+      <guid>https://tiraffe.github.io/blog/mit-6.824-distributed-systems-%E6%80%BB%E7%BB%93/</guid>
+      <description>介绍  课程地址: http://nil.csail.mit.edu/6.824/2017/index.html  最近对分布式系统比较感兴趣，刚好听说MIT-6.824这个课程非常不错，于是自己把这个课程的Lab做了一遍，感觉收获非常大。
+这门课的实验是实现一个分布式的KV数据库。 实验还是有一定难度的（debug要花费比较多时间），好在实验的指导非常有帮助，过程中需要注意的要点几乎都被提到了。
+Lab 1: MapReduce Lab 1还是比较容易的，主要是熟悉一下Go。
+关于Go的学习，我觉得这个A Tour of Go就很不错。Go的语法比较简单，看完这个教程之后就可以开始写了，至于一些库什么的，都可以现用现查。
+Lab 1比较应该注意的就是schedule.go中， 关于channel的使用，如果不注意的话很容易造成死锁。
+doneTasks := make(chan int) for id := 0; id &amp;lt; ntasks; id++ { go func(taskId int) { var taskArgs DoTaskArgs switch phase { case mapPhase: taskArgs = DoTaskArgs{jobName, mapFiles[taskId], phase, taskId, n_other} case reducePhase: taskArgs = DoTaskArgs{jobName, &amp;quot;&amp;quot;, phase, taskId, n_other} } for { worker := &amp;lt;- registerChan if call(worker, &amp;quot;Worker.</description>
+    </item>
+    
+    <item>
+      <title>Hello World</title>
+      <link>https://tiraffe.github.io/blog/hello-world/</link>
+      <pubDate>Wed, 07 Feb 2018 20:53:45 +0800</pubDate>
+      
+      <guid>https://tiraffe.github.io/blog/hello-world/</guid>
+      <description>Hello World.</description>
+    </item>
+    
+    <item>
+      <title>About</title>
+      <link>https://tiraffe.github.io/about/</link>
+      <pubDate>Mon, 29 Jan 2018 22:00:18 +0800</pubDate>
+      
+      <guid>https://tiraffe.github.io/about/</guid>
+      <description>这个人很懒，啥也没写！</description>
+    </item>
+    
+  </channel>
+</rss>

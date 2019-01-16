@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en-US">
+
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="chrome=1">
+<meta name="HandheldFriendly" content="True">
+<meta name="MobileOptimized" content="320">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="referrer" content="no-referrer">
+<meta name="author" content="Yuanhao Tian">
+<meta name="description" content="介绍  课程地址: http://nil.csail.mit.edu/6.824/2017/index.html  最近对分布式系统比较感兴趣，刚好听说MIT-6.824这个课程非常不错，于是自己把这个课程的Lab做了一遍，感觉收获非常大。
+这门课的实验是实现一个分布式的KV数据库。 实验还是有一定难度的（debug要花费比较多时间），好在实验的指导非常有帮助，过程中需要注意的要点几乎都被提到了。
+Lab 1: MapReduce Lab 1还是比较容易的，主要是熟悉一下Go。
+关于Go的学习，我觉得这个A Tour of Go就很不错。Go的语法比较简单，看完这个教程之后就可以开始写了，至于一些库什么的，都可以现用现查。
+Lab 1比较应该注意的就是schedule.go中， 关于channel的使用，如果不注意的话很容易造成死锁。
+doneTasks := make(chan int) for id := 0; id &lt; ntasks; id&#43;&#43; { go func(taskId int) { var taskArgs DoTaskArgs switch phase { case mapPhase: taskArgs = DoTaskArgs{jobName, mapFiles[taskId], phase, taskId, n_other} case reducePhase: taskArgs = DoTaskArgs{jobName, &quot;&quot;, phase, taskId, n_other} } for { worker := &lt;- registerChan if call(worker, &quot;Worker.">
+
+<meta property="og:title" content="MIT-6.824 Distributed Systems 总结" />
+<meta property="og:description" content="介绍  课程地址: http://nil.csail.mit.edu/6.824/2017/index.html  最近对分布式系统比较感兴趣，刚好听说MIT-6.824这个课程非常不错，于是自己把这个课程的Lab做了一遍，感觉收获非常大。
+这门课的实验是实现一个分布式的KV数据库。 实验还是有一定难度的（debug要花费比较多时间），好在实验的指导非常有帮助，过程中需要注意的要点几乎都被提到了。
+Lab 1: MapReduce Lab 1还是比较容易的，主要是熟悉一下Go。
+关于Go的学习，我觉得这个A Tour of Go就很不错。Go的语法比较简单，看完这个教程之后就可以开始写了，至于一些库什么的，都可以现用现查。
+Lab 1比较应该注意的就是schedule.go中， 关于channel的使用，如果不注意的话很容易造成死锁。
+doneTasks := make(chan int) for id := 0; id &lt; ntasks; id&#43;&#43; { go func(taskId int) { var taskArgs DoTaskArgs switch phase { case mapPhase: taskArgs = DoTaskArgs{jobName, mapFiles[taskId], phase, taskId, n_other} case reducePhase: taskArgs = DoTaskArgs{jobName, &quot;&quot;, phase, taskId, n_other} } for { worker := &lt;- registerChan if call(worker, &quot;Worker." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://tiraffe.github.io/blog/mit-6.824-distributed-systems-%E6%80%BB%E7%BB%93/" /><meta property="article:published_time" content="2018-02-26T21:56:59&#43;08:00"/>
+<meta property="article:modified_time" content="2018-02-26T21:56:59&#43;08:00"/>
+
+
+<title>
+
+
+     MIT-6.824 Distributed Systems 总结 
+
+</title>
+<link rel="canonical" href="https://tiraffe.github.io/blog/mit-6.824-distributed-systems-%E6%80%BB%E7%BB%93/">
+
+
+
+
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/default.min.css">
+
+
+
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700|Ubuntu+Mono:400,400i,700,700i|Raleway:500">
+
+
+
+    
+    <link rel="stylesheet" href="https://tiraffe.github.io/css/reset.css?t=2019-01-17%2003%3a16%3a57.04946%20%2b0800%20CST%20m%3d%2b0.035812619">
+    <link rel="stylesheet" href="https://tiraffe.github.io/css/pygments.css?t=2019-01-17%2003%3a16%3a57.04946%20%2b0800%20CST%20m%3d%2b0.035812619">
+    <link rel="stylesheet" href="https://tiraffe.github.io/css/main.css?t=2019-01-17%2003%3a16%3a57.04946%20%2b0800%20CST%20m%3d%2b0.035812619">
+    
+        <link rel="stylesheet" href="https://tiraffe.github.io/css/override.css?t=2019-01-17%2003%3a16%3a57.04946%20%2b0800%20CST%20m%3d%2b0.035812619">
+    
+
+
+
+
+<link rel="shortcut icon"
+
+    href="https://tiraffe.github.io/img/favicon.ico"
+
+>
+
+
+
+
+
+
+
+
+</head>
+
+
+<body lang="en">
+
+<section class="header">
+    <div class="container">
+        <div class="content">
+            
+                
+                
+                
+                
+                
+                    
+                
+                    
+                
+                
+                <a href="https://tiraffe.github.io/"><img class="avatar" src="https://tiraffe.github.io/img/avatar.jpg" srcset="https://tiraffe.github.io/img/avatar.jpg 1x"></a>
+            
+            <a href="https://tiraffe.github.io/"><div class="name">Yuanhao Tian</div></a>
+            
+            <nav>
+                <ul>
+                    
+                        <li class="nav-blog"><a href="https://tiraffe.github.io/blog/"><span>Blog</span></a></li>
+                    
+                        <li class="nav-about"><a href="https://tiraffe.github.io/about/"><span>About</span></a></li>
+                    
+                </ul>
+            </nav>
+        </div>
+    </div>
+</section>
+
+<section class="icons">
+    <div class="container">
+        <div class="content">
+        
+            <a href="//github.com/tiraffe" target="_blank" rel="noopener"><img class="icon" src="https://tiraffe.github.io/img/github.svg" alt="github" /></a>
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+            <a href="//linkedin.com/in/yuanhao-tian-a3b416141/" target="_blank" rel="noopener"><img class="icon" src="https://tiraffe.github.io/img/linkedin.svg" alt="linkedin" /></a>
+        
+        
+        
+            <a href="//zhihu.com/people/tian-yuan-hao/activities" target="_blank" rel="noopener"><img class="icon" src="https://tiraffe.github.io/img/zhihu.png" alt="zhihu" /></a>
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+            <a href="mailto:hlju.tyh@gmail.com"><img class="icon" src="https://tiraffe.github.io/img/email.svg" alt="email" /></a>
+        
+
+        
+
+        
+        </div>
+    </div>
+</section>
+
+
+<section class="main post non-narrow zero-top-spacing">
+    <div class="container">
+        <div class="content">
+            <div class="front-matter">
+                <div class="title-container">
+                    <div class="page-heading">
+
+    MIT-6.824 Distributed Systems 总结
+
+</div>
+
+                    <div class="initials"><a href="https://tiraffe.github.io/"></a></div>
+                </div>
+                <div class="meta">
+                    
+                    <div class="date" title='Mon Feb 26 2018 21:56:59 CST'>Feb 26, 2018</div>
+                    
+                    
+		    <div class="reading-time"><div class="middot"></div>2 minutes read</div>
+                    
+                </div>
+            </div>
+            <div class="markdown">
+                
+
+<h2 id="介绍">介绍</h2>
+
+<ul>
+<li>课程地址: <a href="http://nil.csail.mit.edu/6.824/2017/index.html">http://nil.csail.mit.edu/6.824/2017/index.html</a></li>
+</ul>
+
+<p>最近对分布式系统比较感兴趣，刚好听说MIT-6.824这个课程非常不错，于是自己把这个课程的Lab做了一遍，感觉收获非常大。</p>
+
+<p>这门课的实验是实现一个分布式的KV数据库。
+实验还是有一定难度的（debug要花费比较多时间），好在实验的指导非常有帮助，过程中需要注意的要点几乎都被提到了。</p>
+
+<h2 id="lab-1-mapreduce">Lab 1: MapReduce</h2>
+
+<p>Lab 1还是比较容易的，主要是熟悉一下Go。</p>
+
+<p>关于Go的学习，我觉得这个<a href="https://tour.golang.org/welcome/1">A Tour of Go</a>就很不错。Go的语法比较简单，看完这个教程之后就可以开始写了，至于一些库什么的，都可以现用现查。</p>
+
+<p>Lab 1比较应该注意的就是<a href="https://github.com/tyh24689/MIT-6.824-2017/blob/bfa127207a87e78dc44d73260e556bf603474266/src/mapreduce/schedule.go">schedule.go</a>中，
+关于channel的使用，如果不注意的话很容易造成死锁。</p>
+
+<pre><code class="language-go">doneTasks := make(chan int)
+for id := 0; id &lt; ntasks; id++ {
+    go func(taskId int) {
+        var taskArgs DoTaskArgs
+        switch phase {
+        case mapPhase:
+            taskArgs = DoTaskArgs{jobName, mapFiles[taskId], phase, taskId, n_other}
+        case reducePhase:
+            taskArgs = DoTaskArgs{jobName, &quot;&quot;, phase, taskId, n_other}
+        }
+
+        for {
+            worker := &lt;- registerChan
+            if call(worker, &quot;Worker.DoTask&quot;, &amp;taskArgs, nil) {
+                doneTasks &lt;- taskId
+                registerChan &lt;- worker
+                break
+            }
+            // Should not push failed worker back to chan. If all 
+            // the tasks try to push back failed worker meanwhile  
+            // a new worker is added, the registerChan will be stuck.
+            fmt.Printf(&quot;Task %d has Failed. Retrying...\n&quot;, taskId)
+        }
+    }(id)
+}
+// waiting for all tasks to be finished
+for taskId := 0; taskId &lt; ntasks; taskId++ {
+    &lt;- doneTasks
+}
+</code></pre>
+
+<h2 id="lab-2-raft">Lab 2: Raft</h2>
+
+<p>在做这个实验的过程中多参考一下<a href="https://thesquareplanet.com/blog/students-guide-to-raft/">Students&rsquo; Guide to Raft</a>，这里面涉及到一些实验过程中应该注意的点，还补充了<a href="https://raft.github.io/raft.pdf">论文</a>中没有详细介绍的关于<code>nextIndex</code>的优化。</p>
+
+<p>在Students&rsquo; Guide to Raft有这样一段话:</p>
+
+<blockquote>
+<p>Inevitably, the first iteration of your Raft implementation will be buggy. So will the second. And third. And fourth. In general, each one will be less buggy than the previous one, and, from experience, most of your bugs will be a result of not faithfully following Figure 2.</p>
+</blockquote>
+
+<p>说的太对了，大部分踩的坑都是由于我对于Figure 2有误解，所以Figure 2里面的<strong>每个字都要弄明白并落实到位</strong>！另一方面也说明了Raft实验中测试的重要性，如果没有一个比较全面的测试作为保障，那么实现一个自以为正确实际上却bug百出的Raft几乎是不可避免的。</p>
+
+<p>还有一个比较有用工具是<a href="https://raft.github.io/">Raft Visualization</a>。如果对于某个case下，不理解算法如何成立，那么可以在这里复现一下，培养一下对Raft的直观感觉。</p>
+
+<p>一些值得注意的点（踩过的坑）：</p>
+
+<ul>
+<li>不应当把Heartbeat特殊对待，它只是<code>log</code>为空的<code>AppendEntry</code></li>
+<li>多线程时应时刻警惕任何潜在的状态变化，记得加锁</li>
+<li><code>nextIndex</code>的优化是必要的，要不然有些test过不了</li>
+<li>注意锁之间的依赖关系，尽早将锁加入设计中</li>
+<li>持久化时只需要保存<code>currentTerm</code>, <code>voteFor</code>, <code>log</code></li>
+<li>还有一些各种各样的坑，貌似不具有普遍性，就不一一列举了&hellip;</li>
+</ul>
+
+<h2 id="lab-3-kv-raft">Lab 3: KV Raft</h2>
+
+<blockquote>
+<p>This lab doesn&rsquo;t require you to write much code, but you will most likely spend a substantial amount of time thinking and staring at debugging logs to figure out why your implementation doesn&rsquo;t work. Debugging will be more challenging than in the Raft lab because there are more components that work asynchronously of each other. Start early.</p>
+</blockquote>
+
+<p>如上所述，这个lab在debug上花了不少的时间。</p>
+
+<p>在这个实验中有几个关于select使用十分重要。</p>
+
+<p>比如设置channel接收端超时时间:</p>
+
+<pre><code class="language-go">select {
+case res := &lt;- kv.callbackCh[args.ClientId]:
+    if res.OpIndex &gt;= args.OpIndex {
+        reply.Err = OK
+    }
+case &lt;- time.After(2 * time.Second):
+    reply.Err = TimeOut
+}
+</code></pre>
+
+<p>当前没有接收端时，使用default避免发送端被阻塞:</p>
+
+<pre><code class="language-go">select {
+case kv.callbackCh[command.ClientId] &lt;- res:
+    DPrintf(&quot;# [%d]: Callback succeeded.&quot;, kv.me)
+default:
+    DPrintf(&quot;# [%d]: Callback failed.&quot;, kv.me)
+}
+</code></pre>
+
+<p>还有一个比较重要的问题是，如何避免操作的重复执行。
+这对于一个Fault-tolerant的系统来说至关重要。</p>
+
+<p>由于在实验中存在下面这个假设：</p>
+
+<blockquote>
+<p>It&rsquo;s OK to assume that a client will make only one call into a clerk at a time.</p>
+</blockquote>
+
+<p>我们可以认为client的每个操作是串行的，所以可以递增地赋予每个操作唯一ID，即<code>OpIndex</code>。
+同时考虑到对于sever端，client的请求是可并行的，应该赋予每个client唯一ID（GUID），即<code>ClientId</code>。</p>
+
+<p>所以，<code>(ClientId, OpIndex)</code>即可唯一确定一个操作，同时维护<code>[ClientId]LastOpIndex</code>就可以去重。</p>
+
+<h2 id="lab-4-sharded-kv">Lab 4: Sharded KV</h2>
+
+<p>Codeing&hellip;</p>
+
+<h2 id="end">END</h2>
+
+<ul>
+<li>GitHub: <a href="https://github.com/tiraffe/MIT-6.824-2017">https://github.com/tiraffe/MIT-6.824-2017</a></li>
+</ul>
+
+<p>这是我的实验代码，欢迎Star，如果发现BUG欢迎提出😄~</p>
+
+                <br>
+                
+                <p class="back-to-posts"><a href="https://tiraffe.github.io/blog">Back to posts</a></p>
+            </div>
+            <br>
+            <div class="disqus">
+                <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "tiraffe" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+            </div>
+            
+        </div>
+    </div>
+</section>
+
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-123-45', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/highlight.min.js"></script>
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/languages/go.min.js"></script>
+  
+
+  <script type="text/javascript">
+    hljs.initHighlightingOnLoad();
+  </script>
+
+
+
+
+
+</body>
+</html>
+
